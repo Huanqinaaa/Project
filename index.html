@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="appModule">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.css">
+</head>
+<body>
+<div class="nav navbar-inverse">
+    <div class="container-fluid">
+        <div>
+            <ul class="nav navbar-nav">
+                <li><a href="#!/">Homepage</a></li>
+                <li><a href="#!/employee/list">Employee List</a></li>
+                <li><a href="#!/employee/add">Add Item</a></li>
+                <li><a href="#!/employee/detail">Detail</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div ng-view class="container"></div>
+<script src="node_modules/angular/angular.js"></script>
+<script src="node_modules/angular-resource/angular-resource.js"></script>
+<script src="node_modules/angular-route/angular-route.js"></script>
+
+<script>
+    var app = angular.module('appModule',['ngResource','ngRoute']);
+    app.factory("employee",function ($resource) {  // 创建服务
+        return $resource('/employee/:id',null,{})
+    });
+    app.config(function ($routeProvider){// 配置各个路径中的文件
+        $routeProvider.when('/',{
+            templateUrl:'tmpl/index.html',
+            controller:'indexCtrl'
+        }).when('/employee/add',{
+            templateUrl:'tmpl/add.html',
+            controller:'addCtrl'
+        }).when('/employee/list',{
+            templateUrl:'tmpl/list.html',
+            controller:'listCtrl'
+        }).when('/employee/detail/:nid',{
+            templateUrl:'tmpl/detail.html',
+            controller:'detailCtrl'
+        }).otherwise('/');
+    });
+    app.controller('indexCtrl',function ($scope){
+        $scope.logo = 'This is an Employee List';
+    });
+    app.controller('listCtrl',function ($scope,employee,$location){
+        $scope.employees = employee.query();
+        $scope.goDetail = function (id){
+            $location.path('/employee/detail/'+ id);
+        }
+    });
+    app.controller('addCtrl',function ($scope,employee,$location){
+        $scope.employee = {};
+        $scope.submit = function(){
+            employee.save($scope.employee).$promise.then(function (){
+                $location.path('/employee/list');
+            })
+        };
+    });
+    app.controller('detailCtrl',function ($scope,employee,$location,$routeParams){
+        $scope.employee = {};
+        var employeeId = $routeParams.nid;
+        $scope.employee = employee.get({id:employeeId});
+        $scope.contentAlert = function (content) {
+            alert(content);
+        };
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<div class="row ">
+    <div class="col-sm-2" ng-repeat="employee in employees track by $index">
+        <div  class="text-center" style="background-color: lightblue;">
+                <span ng-click="goDetail(employee.id)">{{employee.name}}</span>
+        </div>
+    </div>
+</div>
