@@ -53,5 +53,5 @@ app.post('/employee',function (req,res){ // add
     })
 });
 app.listen(8004,function(){
-    console.log("8004");
+    console.log("http://localhost:8004");
 });
